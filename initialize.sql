@@ -53,3 +53,54 @@ CREATE TABLE archive (
     updatedAt timestamp
 );
 
+DELIMITER $$
+
+CREATE PROCEDURE archiveTickets(
+    IN cutoffDate date
+)
+BEGIN
+    INSERT INTO archive
+    SELECT * FROM ticketInfo
+    WHERE updatedAt < cutoffDate;
+    DELETE FROM ticketInfo
+    WHERE updatedAt < cutoffDate;
+END$$
+
+DELIMITER ;
+
+DELIMITER $$
+
+CREATE TRIGGER onUpdateSeatsTrigger
+AFTER UPDATE ON ticketInfo
+FOR EACH ROW
+BEGIN
+    IF new.seats < 0 THEN
+        UPDATE ticketInfo SET seats = old.seats
+        WHERE ticketNumber = old.ticketNumber;
+    END IF;
+END$$
+
+DELIMITER ;
+
+DELIMITER $$
+
+CREATE TRIGGER onUpdateUserTypeTrigger
+AFTER UPDATE ON credentials
+FOR EACH ROW
+BEGIN
+    IF new.userType = 'admin' THEN
+        UPDATE credentials SET userType = 'user'
+        WHERE loginID = old.loginID;
+    END IF;
+END$$
+
+DELIMITER ;
+
+LOAD DATA LOCAL INFILE '/Users/Gjueves/Desktop/CS157A/routes.csv'
+INTO TABLE routes
+FIELDS TERMINATED BY ','
+LINES TERMINATED BY '\n'
+IGNORE 1 ROWS
+(airline, airlineID, sourceAirport, sourceAirportID, destAirport, destAirportID);
+
+ALTER TABLE routes ADD (seats int Default 250);

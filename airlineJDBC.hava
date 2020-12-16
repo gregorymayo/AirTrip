@@ -153,6 +153,86 @@ public class airlineJDBC {
 									System.out.println("\nGoing back to menu...");
 									continue ;
 								}
+								else if (userQRet == 6)
+								{
+									System.out.println("Now, let's book a flight!");
+									System.out.println("Enter the source airport ID:");
+									String sourceAirportID = scan.next();
+									System.out.println("Enter the destination airport ID:");
+									String destAirportID = scan.next();
+									System.out.println("Enter the number of seats to book:");
+									int seats = scan.nextInt();
+									System.out.println("Enter the date of flight:");
+									String dateOfFlight = scan.next();
+									System.out.println("Booking your ticket...");
+									stmt = conn.createStatement();
+									String queryFindAirlineID = "select airlineID from routes where sourceAirportID = \'" + sourceAirportID + "\' and destAirportID = \'" + destAirportID + "\';";
+									rs = stmt.executeQuery(queryFindAirlineID);
+									int airlineID = 0;
+									if (rs.next())
+										airlineID = rs.getInt("airlineID");
+									stmt = conn.createStatement();
+									String insertTicketID = "insert into tickets(loginid) values (\'" + usernameRet + "\')";
+									stmt.executeUpdate(insertTicketID);
+									stmt = conn.createStatement();
+									rs = stmt.executeQuery("select max(ticketNumber) from tickets;");
+									int ticketNumberNew = 0;
+									if (rs.next())
+										ticketNumberNew = rs.getInt("max(ticketNumber)");
+									stmt = conn.createStatement();
+									String insertTicketInfo = "insert into ticketInfo(ticketNumber, airlineID, sourceAirportID,"
+											+ "destAirportID, ticketDate, seats) values (\'" + ticketNumberNew + "\', \'" + airlineID + "\', \'"+ sourceAirportID + 
+											"\', \'" + destAirportID + "\', \'" + dateOfFlight + "\', " + seats + ")";
+									stmt.executeUpdate(insertTicketInfo);
+									stmt = conn.createStatement();
+									String queryInsertTicketType = "insert into ticketTypes values (\'" + ticketNumberNew + "\', \'economy\');";
+									stmt.executeUpdate(queryInsertTicketType);
+									System.out.println("Your ticket is booked!");
+									System.out.println("Going back to menu...");
+									continue ;
+								}
+								else if (userQRet == 7)
+								{
+									System.out.println("You have chosen to update a ticket.");
+									System.out.println("Enter the ticket number of your ticket:");
+									int ticketNum = scan.nextInt();
+									System.out.println("Enter the new source airport id:");
+									int newSourceAID = scan.nextInt();
+									System.out.println("Enter the new destination airport id:");
+									int newDestAID = scan.nextInt();
+									System.out.println("Enter the new number of seats:");
+									int newSeats = scan.nextInt();
+									String queryUpdateTicketInfo = "update ticketinfo set "
+											+ "sourceairportid = " + newSourceAID + ", "
+											+ "destairportid = " + newDestAID + ", seats = " 
+											+ newSeats + " where ticketnumber = " + ticketNum + 
+											";";
+									stmt = conn.createStatement();
+									stmt.executeUpdate(queryUpdateTicketInfo);
+									System.out.println("Your ticket has been updated!");
+									System.out.println("Going back to menu...");
+									continue ;
+								}
+								else if (userQRet == 8)
+								{
+									System.out.println("You have chosen to cancel a ticket.");
+									System.out.println("Enter the ticket number:");
+									int ticketNumDelete = scan.nextInt();
+									String queryCancelTicketInfo = "delete from ticketinfo where "
+											+ "ticketnumber = " + ticketNumDelete + ";";
+									stmt = conn.createStatement();
+									stmt.executeUpdate(queryCancelTicketInfo);
+									stmt = conn.createStatement();
+									String queryDeleteTicketTypes = "delete from ticketTypes where ticketNumber = " + ticketNumDelete + ";";
+									stmt.executeUpdate(queryDeleteTicketTypes);
+									String queryCancelTicket = "delete from tickets where "
+											+ "ticketnumber = " + ticketNumDelete + ";";
+									stmt = conn.createStatement();
+									stmt.executeUpdate(queryCancelTicket);
+									System.out.println("Your ticket has been cancelled.");
+									System.out.println("Going back to menu...");
+									continue ;
+								}
 							}
 						}
 					}

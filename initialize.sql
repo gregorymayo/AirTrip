@@ -3,19 +3,19 @@ CREATE DATABASE project157a;
 USE project157a;
 
 CREATE TABLE routes (
-        airline varchar(10),
-        airlineID int,
-        sourceAirport varchar(10),
-        sourceAirportID int,
-        destAirport varchar(10),
-        destAirportID int,
-        primary key(airlineID, sourceAirportID, destAirportID)
+    airline varchar(10),
+    airlineID int,
+    sourceAirport varchar(10),
+    sourceAirportID int,
+    destAirport varchar(10),
+    destAirportID int,
+    primary key(airlineID, sourceAirportID, destAirportID)
 );
 
 CREATE TABLE credentials (
-        loginID varchar(255) primary key,
-        password varchar(255) not null check(char_length(password) >= 12),
-        userType varchar(10)
+    loginID varchar(255) primary key,
+    password varchar(255) not null check(char_length(password) >= 12),
+    userType varchar(10)
 );
 
 CREATE TABLE tickets (
